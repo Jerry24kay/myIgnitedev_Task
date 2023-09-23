@@ -13,7 +13,7 @@
 
 
 
-## My Installation process and steps. 
+# My Installation process and steps. 
 
 
 I began by initiating my Linux environment WSL2, concurrently using MobaXterm and WSL Ubuntu. I verified that Docker Desktop was running, and now I'm ready to commence the installation of "kind."
@@ -26,7 +26,7 @@ chmod +x ./kind
 sudo mv ./kind /usr/local/bin/kind
 ...
 
-## Next, I proceeded to establish a directory for the laboratory, opting for "myIgnitedev_Task" as the folder name.
+# Next, I proceeded to establish a directory for the laboratory, opting for "myIgnitedev_Task" as the folder name.
 
 As per the requirement, I had to generate a YAML file named "cluster_config" for the deployment of the cluster
 
@@ -44,17 +44,17 @@ extraPortMappings:
     protocol: TCP
 
 
-## Afterward, I crafted a Bash script designed to streamline the process of deploying the cluster. This script also includes the functionality to fetch the kubeconfig for the cluster. I named it "ignite_cluster.sh."
+# Afterward, I crafted a Bash script designed to streamline the process of deploying the cluster. This script also includes the functionality to fetch the kubeconfig for the cluster. I named it "ignite_cluster.sh."
 
 ...
-#!/bin/bash
+{#!/bin/bash
 
 # Using kind to Create a Kubernetes Cluster
 kind create cluster --config ./cluster_config.yaml --name ignite-cluster
 
 # Downloading the kubeconfig
 mkdir -p ~/.kube
-kind get kubeconfig --name ignite-cluster > ~/.kube/config
+kind get kubeconfig --name ignite-cluster > ~/.kube/config}
 ...
 
 ## Subsequently, I needed to grant executable permissions to the file, following which I executed the Bash script to automate the cluster setup.
@@ -63,7 +63,7 @@ kind get kubeconfig --name ignite-cluster > ~/.kube/config
 ## Given that I had previously installed Node, npm, and Express on my WSL environment, and Docker Desktop on my machine.
 
 ## This is the straightforward app I obtained from the website, and I intend to utilize Node to execute it.
-
+...
 const express = require('express')
 const app = express()
 const port = 3000
@@ -81,6 +81,7 @@ app.listen(port, () => {
 
 ## I then proceeded to create the Dockerfile for building the application to be used. I then established a directory to house the application and authored the JavaScript file for the simple app.
 
+...
 # Official Node.js runtime to be used as the base image
 FROM node:20-alpine
 
@@ -102,12 +103,13 @@ EXPOSE 3000
 # Define the command to run the application
 CMD ["node", "igniteapp.js"]
 
-##With the local development setup in place, I can now proceed to build the application and push it to my DockerHub repository.
+## With the local development setup in place, I can now proceed to build the application and push it to my DockerHub repository.
 It was successfull. 
 
 
 
-##It's time to configure the Kubernetes deployment. Here's the YAML file I used for this purpose.
+## It's time to configure the Kubernetes deployment. Here's the YAML file I used for this purpose.
+
 ---
 apiVersion: apps/v1
 kind: Deployment
