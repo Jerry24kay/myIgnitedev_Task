@@ -1,0 +1,17 @@
+extraa
+.terraform
+
+*.tfstate
+
+*.tfstate.*
+
+*.tfvars
+
+kubectl
+
+blackbox-values.yaml
+
+node_modules
+
+*lock.*
+

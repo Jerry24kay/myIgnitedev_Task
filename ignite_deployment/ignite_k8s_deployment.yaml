@@ -1,0 +1,32 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: igniteapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: igniteapp
+  template:
+    metadata:
+      labels:
+        app: igniteapp
+    spec:
+      containers:
+        - name: igniteapp
+          image: jerry24kay/igniteapp:1.0.0
+          ports:
+            - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: igniteapp-service
+spec:
+  selector:
+    app: igniteapp
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000
