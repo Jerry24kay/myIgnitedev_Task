@@ -181,6 +181,8 @@ kubectl port-forward deployment/kube-prometheus-stack-prometheus 8000:8000
 I accessed Grafana in my web browser using the URL http://localhost:3260, and I accessed Prometheus using http://localhost:8000 in my web browser as well.
 
 
+#For more info check images 
+
 
     
 
