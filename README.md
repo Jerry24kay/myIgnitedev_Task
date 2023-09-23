@@ -20,17 +20,17 @@ I began by initiating my Linux environment WSL2, concurrently using MobaXterm an
 
 To install "kind," I executed the following command as specified in the documentation.
 
-...
+```
 [ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
 chmod +x ./kind
 sudo mv ./kind /usr/local/bin/kind
-...
+```
 
 # Next, I proceeded to establish a directory for the laboratory, opting for "myIgnitedev_Task" as the folder name.
 
 As per the requirement, I had to generate a YAML file named "cluster_config" for the deployment of the cluster
 
----
+```
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
@@ -42,11 +42,11 @@ extraPortMappings:
 - containerPort: 53
     hostPort: 53
     protocol: TCP
-
+```
 
 # Afterward, I crafted a Bash script designed to streamline the process of deploying the cluster. This script also includes the functionality to fetch the kubeconfig for the cluster. I named it "ignite_cluster.sh."
 
-...
+```
 {#!/bin/bash
 
 # Using kind to Create a Kubernetes Cluster
@@ -55,7 +55,7 @@ kind create cluster --config ./cluster_config.yaml --name ignite-cluster
 # Downloading the kubeconfig
 mkdir -p ~/.kube
 kind get kubeconfig --name ignite-cluster > ~/.kube/config}
-...
+```
 
 ## Subsequently, I needed to grant executable permissions to the file, following which I executed the Bash script to automate the cluster setup.
 
@@ -63,7 +63,7 @@ kind get kubeconfig --name ignite-cluster > ~/.kube/config}
 ## Given that I had previously installed Node, npm, and Express on my WSL environment, and Docker Desktop on my machine.
 
 ## This is the straightforward app I obtained from the website, and I intend to utilize Node to execute it.
-...
+```
 const express = require('express')
 const app = express()
 const port = 3000
@@ -75,13 +75,13 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`app listening on port ${port}`)
 })
-
+```
 
 ## After confirming that I had set the port to 3000, I proceeded to check the localhost to verify whether it was successfully receiving the requests.
 
 ## I then proceeded to create the Dockerfile for building the application to be used. I then established a directory to house the application and authored the JavaScript file for the simple app.
 
-...
+```
 # Official Node.js runtime to be used as the base image
 FROM node:20-alpine
 
@@ -102,7 +102,7 @@ EXPOSE 3000
 
 # Define the command to run the application
 CMD ["node", "igniteapp.js"]
-
+```
 ## With the local development setup in place, I can now proceed to build the application and push it to my DockerHub repository.
 It was successfull. 
 
@@ -110,7 +110,7 @@ It was successfull.
 
 ## It's time to configure the Kubernetes deployment. Here's the YAML file I used for this purpose.
 
----
+```
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -142,7 +142,7 @@ spec:
   - protocol: TCP
     port: 3000
     targetPort: 3000
-
+```
 ##To deploy this, I employed Terraform. I followed these steps:
 
 1.Executed helm repo add prometheus-community https://prometheus-community.github.io/helm-charts 
@@ -152,25 +152,26 @@ helm repo update
 4. Finally, used terraform apply to initiate the deployment of the application into the "ignite_cluster."
 
 
-For the main.tf
+##For the main.tf
+```
    resource "kubectl_manifest" "igniteapp" {
   yaml_body = file("${path.module}/ignite_k8s_deployment.yaml")
 }
 
-# run this first in terminal: `helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && helm repo update`
 
 resource "helm_release" "kube_prom" {
   name       = "kube-prometheus-stack"
   chart      = "prometheus-community/kube-prometheus-stack"
 
 }
+```
 
-For the Vairable.tf
-
+## For the Vairable.tf
+```
 variable "dockerhub_username" {}
 
 variable "kube_config_path" {}
-
+```
 
 ##For port forwarding in the context of monitoring, I used the following configuration:
 kubectl port-forward deployment/kube-prometheus-stack-grafana 3260:3000
