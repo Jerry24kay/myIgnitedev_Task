@@ -11,7 +11,6 @@
 2. create a kubernetes deployment manifest to deploy to deploy the Node.js to the kind cluste but don't apply it yet
 3. using the [kubectl terraform provider](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs), write a terraform code to deploy the kubectl manifest to the kind cluster
 
-### Bonus
 
 
 ## My Installation process and steps. 
@@ -20,13 +19,14 @@
 I began by initiating my Linux environment WSL2, concurrently using MobaXterm and WSL Ubuntu. I verified that Docker Desktop was running, and now I'm ready to commence the installation of "kind."
 
 To install "kind," I executed the following command as specified in the documentation.
-....
+
+...
 [ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
 chmod +x ./kind
 sudo mv ./kind /usr/local/bin/kind
 ...
 
-##Next, I proceeded to establish a directory for the laboratory, opting for "myIgnitedev_Task" as the folder name.
+## Next, I proceeded to establish a directory for the laboratory, opting for "myIgnitedev_Task" as the folder name.
 
 As per the requirement, I had to generate a YAML file named "cluster_config" for the deployment of the cluster
 
@@ -44,9 +44,9 @@ extraPortMappings:
     protocol: TCP
 
 
-##Afterward, I crafted a Bash script designed to streamline the process of deploying the cluster. This script also includes the functionality to fetch the kubeconfig for the cluster. I named it "ignite_cluster.sh."
+## Afterward, I crafted a Bash script designed to streamline the process of deploying the cluster. This script also includes the functionality to fetch the kubeconfig for the cluster. I named it "ignite_cluster.sh."
 
-
+...
 #!/bin/bash
 
 # Using kind to Create a Kubernetes Cluster
@@ -55,14 +55,14 @@ kind create cluster --config ./cluster_config.yaml --name ignite-cluster
 # Downloading the kubeconfig
 mkdir -p ~/.kube
 kind get kubeconfig --name ignite-cluster > ~/.kube/config
+...
+
+## Subsequently, I needed to grant executable permissions to the file, following which I executed the Bash script to automate the cluster setup.
 
 
-##Subsequently, I needed to grant executable permissions to the file, following which I executed the Bash script to automate the cluster setup.
+## Given that I had previously installed Node, npm, and Express on my WSL environment, and Docker Desktop on my machine.
 
-
-##Given that I had previously installed Node, npm, and Express on my WSL environment, and Docker Desktop on my machine.
-
-##This is the straightforward app I obtained from the website, and I intend to utilize Node to execute it.
+## This is the straightforward app I obtained from the website, and I intend to utilize Node to execute it.
 
 const express = require('express')
 const app = express()
@@ -77,9 +77,9 @@ app.listen(port, () => {
 })
 
 
-##After confirming that I had set the port to 3000, I proceeded to check the localhost to verify whether it was successfully receiving the requests.
+## After confirming that I had set the port to 3000, I proceeded to check the localhost to verify whether it was successfully receiving the requests.
 
-##I then proceeded to create the Dockerfile for building the application to be used. I then established a directory to house the application and authored the JavaScript file for the simple app.
+## I then proceeded to create the Dockerfile for building the application to be used. I then established a directory to house the application and authored the JavaScript file for the simple app.
 
 # Official Node.js runtime to be used as the base image
 FROM node:20-alpine
