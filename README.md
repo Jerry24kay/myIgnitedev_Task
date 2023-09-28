@@ -44,7 +44,7 @@ extraPortMappings:
     protocol: TCP
 ```
 
-# Afterward, I crafted a Bash script designed to streamline the process of deploying the cluster. This script also includes the functionality to fetch the kubeconfig for the cluster. I named it "ignite_cluster.sh."
+## Afterward, I crafted a Bash script designed to streamline the process of deploying the cluster. This script also includes the functionality to fetch the kubeconfig for the cluster. I named it "ignite_cluster.sh."
 
 ```
 #!/bin/bash
