@@ -47,22 +47,38 @@ extraPortMappings:
 # Afterward, I crafted a Bash script designed to streamline the process of deploying the cluster. This script also includes the functionality to fetch the kubeconfig for the cluster. I named it "ignite_cluster.sh."
 
 ```
-{#!/bin/bash
+#!/bin/bash
 
 # Using kind to Create a Kubernetes Cluster
 kind create cluster --config ./cluster_config.yaml --name ignite-cluster
 
 # Downloading the kubeconfig
 mkdir -p ~/.kube
-kind get kubeconfig --name ignite-cluster > ~/.kube/config}
+kind get kubeconfig --name ignite-cluster > ~/.kube/config
 ```
 
-## Subsequently, I needed to grant executable permissions to the file, following which I executed the Bash script to automate the cluster setup.
+## Subsequently, I needed to grant executable permissions to the file, with 
+```
+chmod +x ignite_cluster.sh
+```
+following which I executed the Bash script to automate the cluster setup.
+```
+sudo ./ignite_cluster.sh
+```
 
 
 ## Given that I had previously installed Node, npm, and Express on my WSL environment, and Docker Desktop on my machine.
+I created a folder for the app, named it igniteapp and changed my directory to it. 
+In the igniteapp dirctory i ran the following commands
+```
+npm init
+npm install express
+```
 
-## This is the straightforward app I obtained from the website, and I intend to utilize Node to execute it.
+ 
+ ## Next step: This is the straightforward app I obtained from the website, and I intend to utilize Node to execute it.
+ I created the file igniteapp.js and used this template for a simple website.
+
 ```
 const express = require('express')
 const app = express()
@@ -77,9 +93,10 @@ app.listen(port, () => {
 })
 ```
 
-## After confirming that I had set the port to 3000, I proceeded to check the localhost to verify whether it was successfully receiving the requests.
+After confirming that I had set the port to 3000, I proceeded to run node ```igniteapp.js``` check the localhost to verify whether it was successfully receiving the requests. by checking my ```localhost:3000```
 
-## I then proceeded to create the Dockerfile for building the application to be used. I then established a directory to house the application and authored the JavaScript file for the simple app.
+
+## Next Step: Create the Dockerfile to build the application. .
 
 ```
 # Official Node.js runtime to be used as the base image
@@ -103,12 +120,19 @@ EXPOSE 3000
 # Define the command to run the application
 CMD ["node", "igniteapp.js"]
 ```
-## With the local development setup in place, I can now proceed to build the application and push it to my DockerHub repository.
-It was successfull. 
+The dockerfile is ready and i used the command below to execute the creation and pushing to my dockerhub 
+
+```
+docker build -t <my-dockerhub-username>/igniteapp:1.0.0 .
+docker push <my-dockerhub-username>/igniteapp:1.0.0
+
+```
+image successfully pushed to my dockerhub. 
 
 
 
-## It's time to configure the Kubernetes deployment. Here's the YAML file I used for this purpose.
+## Next Step: Configure the manifest for Kubernetes deployment. 
+I created a new folder and created a manifest, this is the yaml manifest.
 
 ```
 apiVersion: apps/v1
@@ -143,16 +167,34 @@ spec:
     port: 3000
     targetPort: 3000
 ```
-##To deploy this, I employed Terraform. I followed these steps:
 
-1.Executed helm repo add prometheus-community https://prometheus-community.github.io/helm-charts 
+## Inorder to deploy, I employed Terraform and I followed these steps:
+
+
+1.Executed 
+```
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
-2. Executed terraform init to initialize the Terraform configuration.
-3. Ran terraform plan to preview the changes and verify the deployment plan.
-4. Finally, used terraform apply to initiate the deployment of the application into the "ignite_cluster."
+```
+2. Initialize the Terraform configuration.
+```
+terraform init
+```
+
+4. Preview the changes and verify the deployment plan.
+```
+terraform plan
+```
+
+5. Finally,Initiate the deployment of the application into the "ignite_cluster."
+```
+terraform apply
+```
 
 
-##For the main.tf
+# Below are the configurations i used for this steps.
+
+## For the main.tf
 ```
    resource "kubectl_manifest" "igniteapp" {
   yaml_body = file("${path.module}/ignite_k8s_deployment.yaml")
@@ -173,15 +215,17 @@ variable "dockerhub_username" {}
 variable "kube_config_path" {}
 ```
 
-##For port forwarding in the context of monitoring, I used the following configuration:
+## For port forwarding in the context of monitoring, I used the following configuration:
+```
 kubectl port-forward deployment/kube-prometheus-stack-grafana 3260:3000
 kubectl port-forward deployment/kube-prometheus-stack-prometheus 8000:8000
+```
 
 
-I accessed Grafana in my web browser using the URL http://localhost:3260, and I accessed Prometheus using http://localhost:8000 in my web browser as well.
+I accessed Grafana in my web browser using the URL ```http://localhost:3260```, and I accessed Prometheus using ```http://localhost:8000``` in my web browser as well.
 
 
-#For more info check images 
+# For more info check images 
 
 
     
