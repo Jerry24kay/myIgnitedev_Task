@@ -77,7 +77,7 @@ npm install express
 
  
  ## Next step: This is the straightforward app I obtained from the website, and I intend to utilize Node to execute it.
- I created the file igniteapp.js and used this template for a simple website.
+ I used this template for a simple website and created javascript file igniteapp.js
 
 ```
 const express = require('express')
@@ -93,10 +93,10 @@ app.listen(port, () => {
 })
 ```
 
-After confirming that I had set the port to 3000, I proceeded to run node ```igniteapp.js``` check the localhost to verify whether it was successfully receiving the requests. by checking my ```localhost:3000```
+After confirming that I had set the port to 3000, I proceeded to run ```node igniteapp.js``` check the localhost to verify whether it was successfully receiving the requests. by checking my ```localhost:3000```
 
 
-## Next Step: Create the Dockerfile to build the application. .
+## Next Step: Create the Dockerfile to build the application. 
 
 ```
 # Official Node.js runtime to be used as the base image
@@ -168,8 +168,37 @@ spec:
     targetPort: 3000
 ```
 
-## Inorder to deploy, I employed Terraform and I followed these steps:
+## Inorder to deploy the manifest, I employed Terraform configuration and I followed these steps:
 
+NOTE: I have installed these in my local machine so i simply moved to the next stage, if you have not then get the following installed. 
+```
+Helm
+Kubectl
+Terraform
+```
+# Below are the terraform configurations i used for these steps.
+
+## For the main.tf
+```
+   resource "kubectl_manifest" "igniteapp" {
+  yaml_body = file("${path.module}/ignite_k8s_deployment.yaml")
+}
+
+
+resource "helm_release" "kube_prom" {
+  name       = "kube-prometheus-stack"
+  chart      = "prometheus-community/kube-prometheus-stack"
+
+}
+```
+
+## For the variables.tf
+```
+variable "dockerhub_username" {}
+
+variable "kube_config_path" {}
+```
+once i completed the config i then executed the following commands 
 
 1.Executed 
 ```
@@ -191,29 +220,6 @@ terraform plan
 terraform apply
 ```
 
-
-# Below are the configurations i used for this steps.
-
-## For the main.tf
-```
-   resource "kubectl_manifest" "igniteapp" {
-  yaml_body = file("${path.module}/ignite_k8s_deployment.yaml")
-}
-
-
-resource "helm_release" "kube_prom" {
-  name       = "kube-prometheus-stack"
-  chart      = "prometheus-community/kube-prometheus-stack"
-
-}
-```
-
-## For the Vairable.tf
-```
-variable "dockerhub_username" {}
-
-variable "kube_config_path" {}
-```
 
 ## For port forwarding in the context of monitoring, I used the following configuration:
 ```
