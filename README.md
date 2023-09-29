@@ -224,11 +224,11 @@ terraform apply
 ## For port forwarding in the context of monitoring, I used the following configuration:
 ```
 kubectl port-forward deployment/kube-prometheus-stack-grafana 3260:3000
-kubectl port-forward deployment/kube-prometheus-stack-prometheus 8000:8000
+kubectl port-forward deployment/kube-prometheus-stack-prometheus 9090:9090
 ```
 
 
-I accessed Grafana in my web browser using the URL ```http://localhost:3260```, and I accessed Prometheus using ```http://localhost:8000``` in my web browser as well.
+I accessed Grafana in my web browser using the URL ```http://localhost:3260```, and I accessed Prometheus using ```http://localhost:9090``` in my web browser as well.
 
 
 # For more info check images 
